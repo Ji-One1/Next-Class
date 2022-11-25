@@ -1,8 +1,8 @@
 import './Home.css';
-import { NavBar} from '../../components/index';
+import { NavBar } from '../../components/index';
 import { doc, getDoc, getFirestore, updateDoc, arrayUnion } from "firebase/firestore";
 import { auth } from '../../firebase';
-import {useAuthState} from 'react-firebase-hooks/auth';
+import { useAuthState } from 'react-firebase-hooks/auth';
 import React, { useEffect, useState } from 'react';
 import courses from './Courses.json';
 import FullCalendar from '@fullcalendar/react';
@@ -21,11 +21,7 @@ const Home = () => {
   });
 
   //Array for courses
-  const [events, setEvents] =  useState([
-    {
-
-    }
-  ]);
+  const [events, setEvents] = useState([{ }]);
   
   //Variable for logged in user
   const[user] = useAuthState(auth);
@@ -86,8 +82,8 @@ const Home = () => {
                      today_classes.push([courses[subjectName][courseSection], i, subjectName]);
                      break
                    }
-        }
-
+                 }
+      //Set courses timeslot to calendar
       today_classes.sort((a, b) => {
       let timeA = a[0]['timeslot'][a[1]]['startTime'];
       let timeB = b[0]['timeslot'][a[1]]['startTime']
@@ -125,7 +121,7 @@ setEvents(temp_ls)
 console.log(temp_ls);
 
 }
-      }
+  }
     }
       } else {
         console.log("No such document!");
@@ -136,41 +132,38 @@ console.log(temp_ls);
   return (
     <div className="home-wrapper">
       <NavBar />
-
           <div className='block-container'>
             <div className="schedule-container" >
               <FullCalendar
-        plugins={[timeGridPlugin, interactionPlugin]}
-        initialView="timeGridWeek"
-        allDaySlot={false}
-        slotMinTime="08:00:00"
-        slotMaxTime="18:00:00"
-        weekends={false}
-        dayHeaderFormat={{ weekday: 'short', omitCommas: true }}
-        events={events}
-        eventOverlap={false}
-        slotEventOverlap={false}
-        displayEventTime={false}
-        scrollTime="08:00:00"
-        eventColor="#3d7af3"
-        nowIndicator
-        dateClick={(e) => console.log(e.dateStr)}
-        eventClick={(e) => console.log(e.event.id)}
-        />
-    
+                  plugins={[timeGridPlugin, interactionPlugin]}
+                  initialView="timeGridWeek"
+                  allDaySlot={false}
+                  slotMinTime="08:00:00"
+                  slotMaxTime="18:00:00"
+                  weekends={false}
+                  dayHeaderFormat={{ weekday: 'short', omitCommas: true }}
+                  events={events}
+                  eventOverlap={false}
+                  slotEventOverlap={false}
+                  displayEventTime={false}
+                  scrollTime="08:00:00"
+                  eventColor="#3d7af3"
+                  nowIndicator
+                  dateClick={(e) => console.log(e.dateStr)}
+                  eventClick={(e) => console.log(e.event.id)}
+                />
             </div>
             <div className='friends-container' id='friend'>
-            <div class="input-bar" id='input-bar-small'>
-                <input  onChange={(event) => setFriend(event.target.value)} type="text" id="Email" class="input" placeholder='Email Adress'/>
-                <box-icon name='user'></box-icon>
-            </div>
+              <div class="input-bar" id='input-bar-small'>
+                  <input  onChange={(event) => setFriend(event.target.value)} type="text" id="Email" class="input" placeholder='Email Adress'/>
+                  <box-icon name='user'/>
+              </div>
             <button onClick={addFriend} className="blue">Add friends</button>
             <div className='friendslist'>
               <h1 className='friendslist'>Friends</h1>
-              <div id='friends'></div>
+              <div id='friends'/>
             </div>
             </div>
-
           </div>
       </div>
     )
@@ -179,3 +172,4 @@ console.log(temp_ls);
 
 
 export default Home
+
