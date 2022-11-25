@@ -3,7 +3,7 @@ import { NavBar} from '../../components/index';
 import { doc, getDoc, getFirestore, updateDoc, arrayUnion } from "firebase/firestore";
 import { auth } from '../../firebase';
 import {useAuthState} from 'react-firebase-hooks/auth';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import courses from './Courses.json';
 import FullCalendar from '@fullcalendar/react';
 import timeGridPlugin from '@fullcalendar/timegrid';
@@ -11,24 +11,34 @@ import interactionPlugin from '@fullcalendar/interaction';
 
 const db = getFirestore();
 
-
-
 const Home = () => {
-  
 
+  //Runs function at start of Home component
+  useEffect(() => {
+    setTimeout(() => {
+      LoadingData();
+    }, 200);
+  });
+
+  //Array for courses
   const [events, setEvents] =  useState([
     {
 
     }
   ]);
   
-  
+  //Variable for logged in user
   const[user] = useAuthState(auth);
+
+  //useStates for friend adding
   const[friend, setFriend] = React.useState('');
 
+  //Function to add friend
   const addFriend = () => {
   
     if (friend !== ''){
+
+      //Adds friend to user's friend list
       const friendRef = doc(db, "users", user.email);
       updateDoc(friendRef, {
           friends: arrayUnion(friend),
@@ -37,17 +47,23 @@ const Home = () => {
     }
       else {
         alert("Please fill in all fields");
-    }
-}
-
+    }}
+  
+  //Function to load data from firebase
   const LoadingData = () => {
+
+    //Gets user's data from firebase
     getDoc(doc(db, "users", user.email)).then(docSnap => {
+
+      //Sets user's friends to H1
       if (docSnap.exists()) {
         var myFriends = docSnap.data();
         document.getElementById("friends").innerHTML = String(myFriends.friends).split(',').join('<br><br>');
         console.log("My friends: " + myFriends.friends);
       }
     });
+
+    //Gets user's courses from firebase
     getDoc(doc(db, "users", user.email)).then(docSnap => {
       if (docSnap.exists()) {
         var userClass = docSnap.data().classes;
@@ -57,13 +73,14 @@ const Home = () => {
     
       const today = 2 //new Date().getDay() + 1;
       let today_classes = [];
-
+      
+      //Gets user's courses and section from firebase
       for (let i = 0; i < userClass.length; i++) {
           for (let k = 0; i < userClass.length; i++) {
             let subjectName = userClass[i][k];
             let courseSection = userClass[i][k+1];
 
-          
+          //Gets course data from json file
           for (let i = 0; i < courses[subjectName][courseSection]['timeslot'].length; i++) {
                    if (courses[subjectName][courseSection]['timeslot'][i]['day'] === today){
                      today_classes.push([courses[subjectName][courseSection], i, subjectName]);
@@ -122,7 +139,6 @@ console.log(temp_ls);
 
           <div className='block-container'>
             <div className="schedule-container" >
-              <button className="blue" onClick={LoadingData}>Load my Calendar</button>
               <FullCalendar
         plugins={[timeGridPlugin, interactionPlugin]}
         initialView="timeGridWeek"
